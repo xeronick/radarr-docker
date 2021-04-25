@@ -101,11 +101,9 @@ class MediaProcessor:
                             info = self.isValidSource(inputFile)
                             first = False
 
-                            # Reverse Ouput
+                        # Move to Radarr/Sonarr expected output dir
+                        if not self.settings.moveTo:
                             output['output'] = self.restoreFromOutput(origInputFile, output['output'], resolution=resolution)
-                        else:
-                            # Reverse Ouput
-                            output['output'] = self.restoreFromOutput(inputFile, output['output'], resolution=resolution)
 
                         # Move file to correct location
                         outputFiles += self.moveFile(output['output'])
