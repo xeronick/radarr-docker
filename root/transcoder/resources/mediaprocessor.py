@@ -115,7 +115,7 @@ class MediaProcessor:
                             except:
                                 self.log.exception("Error refreshing Plex.")
 
-                if os.path.isfile(origInputFile):
+                if os.path.isfile(origInputFile) and '.mp4' not in origInputFile:
                     self.log.debug("%s exists, deleting copied file." % (origInputFile))
                     if self.removeFile(origInputFile):
                         self.log.debug("%s deleted." % origInputFile)
@@ -128,9 +128,6 @@ class MediaProcessor:
                         self.log.debug("%s deleted." % inputFile)
                     else:
                         self.log.error("Couldn't delete %s." % inputFile)
-
-                for file in outputFiles:
-                    self.setPermissions(file)
 
                 # Run any post process scripts
                 if self.settings.postprocess:
