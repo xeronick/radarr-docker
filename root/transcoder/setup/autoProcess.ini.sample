@@ -1,0 +1,40 @@
+[Converter]
+ffmpeg = /usr/local/bin/ffmpeg
+ffprobe = /usr/local/bin/ffprobe
+threads = 0
+hwaccels = 
+hwaccel-decoders = h264_cuvid, mjpeg_cuvid, mpeg1_cuvid, mpeg2_cuvid, mpeg4_cuvid, vc1_cuvid, hevc_qsv, h264_qsv, hevc_vaapi, h264_vaapi
+hwdevices = vaapi:/dev/dri/renderD128
+hwaccel-output-format = vaapi:vaapi
+output-directory = 
+ignored-extensions = nfo, ds_store
+move-to = 
+delete-original = True
+post-process = False
+wait-post-process = False
+detailed-progress = False
+attachment-codec = 
+
+[Permissions]
+chmod = 0644
+uid = -1
+gid = -1
+
+[Subtitle.Subliminal.Auth]
+opensubtitles = 
+tvsubtitles = 
+
+[Radarr]
+host = localhost
+port = 7878
+apikey = 
+ssl = False
+webroot = 
+force-rename = False
+rescan = True
+
+[Plex]
+host = localhost
+port = 32400
+refresh = False
+token = 

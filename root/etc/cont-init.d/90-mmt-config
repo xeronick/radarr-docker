@@ -1,0 +1,30 @@
+#!/usr/bin/with-contenv bash
+
+# ffmpeg
+if [[ -f "/usr/local/bin/ffmpeg" ]]
+then
+    :
+else
+    wget -q ${MMT_FFMPEG_URL} -O /tmp/ffmpeg.tar.xz
+    tar -xJf /tmp/ffmpeg.tar.xz -C /usr/local/bin --strip-components 1
+    chown abc:abc /usr/local/bin/ffmpeg
+    chown abc:abc /usr/local/bin/ffprobe
+    chmod g+x /usr/local/bin/ffmpeg
+    chmod g+x /usr/local/bin/ffprobe
+    rm -rf /tmp/*
+fi
+
+# update from git
+if [[ "${MMT_UPDATE}" == "true" ]]
+then
+    git -C /transcoder pull origin master --quiet
+fi
+
+# permissions
+chown -R abc:abc /transcoder
+chmod -R 775 /transcoder/*.sh
+
+# update autoprocess
+/transcoder/venv/bin/python3 /transcoder/update.py
+
+exit $?
