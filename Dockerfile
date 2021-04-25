@@ -11,7 +11,7 @@ RUN \
   git \
   python3 \
   python3-pip \
-  php7.2-cli \
+  php7.4-cli \
   nano \
   wget
 
