@@ -14,6 +14,7 @@ post-process = False
 wait-post-process = False
 detailed-progress = False
 attachment-codec = 
+multi-bitrate = False
 
 [Permissions]
 chmod = 0644

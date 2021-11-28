@@ -68,52 +68,53 @@ class MediaProcessor:
 
                 first = True
                 for resolution in resolutions:
-                    output = self.process(inputFile, original=original, info=info, resolution=resolution)
+                    if self.settings.multibitrate == True or first == True:
+                        output = self.process(inputFile, original=original, info=info, resolution=resolution)
 
-                    if output:
-                        if not language:
-                            language = 'eng' or self.getDefaultAudioLanguage(output['options']) or None
-                        self.log.debug("Tag language setting is %s, using language %s for tagging." % ('eng' or None, language))
-                        # Tag with metadata
-                        tagFailed = False
-                        try:
-                            tag = Metadata(mediatype, tvdbId=tvdbId, tmdbId=tmdbId, imdbId=imdbId, season=season, episode=episode, original=original, language=language)
-                            tmdbId = tag.tmdbId
-                            self.log.info("Tagging %s with TMDB ID %s." % (output['output'], tag.tmdbId))
-                            tag.writeTags(output['output'], self.converter, True, False, output['x'], output['y'])
-                        except:
-                            self.log.exception("Unable to tag file")
-                            tagFailed = True
-
-                        # QTFS
-                        if not tagFailed:
-                            self.QTFS(output['output'])
-
-                        # Permissions
-                        self.setPermissions(output['output'])
-
-                        # Complete initial file
-                        if first == True:
-                            origInputFile = inputFile
-                            inputFile = str(output['output']).replace('.mp4', '-copy.mp4')
-                            shutil.copy(output['output'], inputFile)
-                            self.log.debug("%s copied to %s." % (output['output'], inputFile))
-                            info = self.isValidSource(inputFile)
-                            first = False
-
-                        # Move to Radarr/Sonarr expected output dir
-                        if not self.settings.moveTo:
-                            output['output'] = self.restoreFromOutput(origInputFile, output['output'], resolution=resolution)
-
-                        # Move file to correct location
-                        outputFiles += self.moveFile(output['output'])
-
-                        # Refresh Plex
-                        if self.settings.Plex.get('refresh', False):
+                        if output:
+                            if not language:
+                                language = 'eng' or self.getDefaultAudioLanguage(output['options']) or None
+                            self.log.debug("Tag language setting is %s, using language %s for tagging." % ('eng' or None, language))
+                            # Tag with metadata
+                            tagFailed = False
                             try:
-                                plex.refreshPlex(self.settings, mediatype, self.log)
+                                tag = Metadata(mediatype, tvdbId=tvdbId, tmdbId=tmdbId, imdbId=imdbId, season=season, episode=episode, original=original, language=language)
+                                tmdbId = tag.tmdbId
+                                self.log.info("Tagging %s with TMDB ID %s." % (output['output'], tag.tmdbId))
+                                tag.writeTags(output['output'], self.converter, True, False, output['x'], output['y'])
                             except:
-                                self.log.exception("Error refreshing Plex.")
+                                self.log.exception("Unable to tag file")
+                                tagFailed = True
+
+                            # QTFS
+                            if not tagFailed:
+                                self.QTFS(output['output'])
+
+                            # Permissions
+                            self.setPermissions(output['output'])
+
+                            # Complete initial file
+                            if first == True:
+                                origInputFile = inputFile
+                                inputFile = str(output['output']).replace('.mp4', '-copy.mp4')
+                                shutil.copy(output['output'], inputFile)
+                                self.log.debug("%s copied to %s." % (output['output'], inputFile))
+                                info = self.isValidSource(inputFile)
+                                first = False
+
+                            # Move to Radarr/Sonarr expected output dir
+                            if not self.settings.moveTo:
+                                output['output'] = self.restoreFromOutput(origInputFile, output['output'], resolution=resolution)
+
+                            # Move file to correct location
+                            outputFiles += self.moveFile(output['output'])
+
+                            # Refresh Plex
+                            if self.settings.Plex.get('refresh', False):
+                                try:
+                                    plex.refreshPlex(self.settings, mediatype, self.log)
+                                except:
+                                    self.log.exception("Error refreshing Plex.")
 
                 if os.path.isfile(origInputFile) and '.mp4' not in origInputFile:
                     self.log.debug("%s exists, deleting copied file." % (origInputFile))

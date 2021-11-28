@@ -107,6 +107,7 @@ class ReadSettings:
             'wait-post-process': False,
             'detailed-progress': False,
             'attachment-codec': '',
+            'multi-bitrate': False,
         },
         'Permissions': {
             'chmod': '0644',
@@ -230,6 +231,7 @@ class ReadSettings:
         self.waitpostprocess = config.getboolean(section, 'wait-post-process')
         self.detailedprogress = config.getboolean(section, 'detailed-progress')
         self.attachmentcodec = config.getList(section, 'attachment-codec')
+        self.multibitrate = config.getboolean(section, 'multi-bitrate')
     
         # Permissions
         section = "Permissions"
