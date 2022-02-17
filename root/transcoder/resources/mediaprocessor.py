@@ -583,6 +583,7 @@ class MediaProcessor:
             'pix_fmt': vpix_fmt,
             'field_order': vfieldorder,
             'width': vwidth,
+            'filter': 'bwdif=mode=send_field:parity=auto:deint=all',
             'title': self.videoStreamTitle(width=vwidth, swidth=info.video.video_width, sheight=info.video.video_height),
             'debug': vdebug,
         }
@@ -824,7 +825,7 @@ class MediaProcessor:
         }
 
         preopts =  ['-hide_banner']
-        postopts = ['-threads', str(self.settings.threads), '-metadata:g', 'encoding_tool=MMT', '-deinterlace', '-vsync', '1', '-g', '60', '-sc_threshold', '0', '-movflags', 'faststart']
+        postopts = ['-threads', str(self.settings.threads), '-metadata:g', 'encoding_tool=MMT','-vsync', '1', '-g', '60', '-sc_threshold', '0', '-movflags', 'faststart']
 
         # FFMPEG allows TrueHD experimental
         if options.get('format') in ['mp4']:
