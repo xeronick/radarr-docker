@@ -5,12 +5,12 @@ ENV MMT_FFMPEG_URL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd6
 ENV MMT_OPENSSL_VERSION 1.1.1k
 
 RUN \
-  apt-get update && \
-  apt-get install -y \
+  apk update && \
+  apk add --no-cache \
   ffmpeg \
   git \
   python3 \
-  python3-pip \
+  py3-pip \
   php7.4-cli \
   nano \
   wget
@@ -51,5 +51,4 @@ RUN \
   ln -s /config/transcoder/autoProcess.ini /transcoder/config/autoProcess.ini && \
   rm -rf \
 	/tmp/* \
-	/var/lib/apt/lists/* \
 	/var/tmp/*
