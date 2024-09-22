@@ -17,10 +17,12 @@ def processMovie(dirName, settings, nzbGet=False, importMode=None, logger=None, 
     log.info("%sRadarr notifier started." % infoprefix)
 
     # Path Mapping
-    for k in pathMapping:
-        if dirName.startswith(k):
-            dirName = dirName.replace(k, pathMapping[k], 1)
-            log.info("PathMapping match found, replacing %s with %s, final API directory is %s." % (k, pathMapping[k], dirName))
+    targetdirs = dirName.split(os.sep)
+    for k in sorted(pathMapping.keys(), reverse=True):
+        mapdirs = k.split(os.sep)
+        if mapdirs == targetdirs[:len(mapdirs)]:
+            dirName = os.path.join(pathMapping[k], os.path.relpath(dirName, k))
+            log.debug("PathMapping match found, replacing %s with %s, final directory is %s." % (k, pathMapping[k], dirName))
             break
 
     # Import Requests
@@ -49,11 +51,14 @@ def processMovie(dirName, settings, nzbGet=False, importMode=None, logger=None, 
         protocol = "http://"
 
     webroot = settings.Radarr['webroot']
-    url = protocol + host + ":" + str(port) + webroot + "/api/command"
+    url = protocol + host + ":" + str(port) + webroot + "/api/v3/command"
     payload = {'name': 'DownloadedMoviesScan', 'path': dirName}
     if importMode:
         payload["importMode"] = importMode
-    headers = {'X-Api-Key': apikey}
+    headers = {
+        'X-Api-Key': apikey,
+        'User-Agent': "MMT - autoprocess/radarr"
+    }
 
     log.debug("Radarr host: %s." % host)
     log.debug("Radarr port: %s." % port)
@@ -68,7 +73,11 @@ def processMovie(dirName, settings, nzbGet=False, importMode=None, logger=None, 
         r = requests.post(url, json=payload, headers=headers)
         rstate = r.json()
         log.debug(rstate)
-        log.info("%sRadarr response: %s." % (infoprefix, rstate['state']))
+        try:
+            rstate = rstate[0]
+        except:
+            pass
+        log.info("%sRadarr response DownloadedMoviesScan command: ID %s %s." % (infoprefix, rstate['id'], rstate['status']))
         return True
     except:
         log.exception("%sUpdate to Radarr failed, check if Radarr is running, autoProcess.ini settings and make sure your Radarr settings are correct (apikey?), or check install of python modules requests." % errorprefix)

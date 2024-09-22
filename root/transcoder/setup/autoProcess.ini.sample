@@ -33,6 +33,8 @@ ssl = False
 webroot = 
 force-rename = False
 rescan = True
+in-progress-check = True
+block-reprocess = False
 
 [Plex]
 host = localhost
