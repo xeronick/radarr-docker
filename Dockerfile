@@ -42,7 +42,7 @@ RUN \
   rm -rf /usr/bin/openssl && \
   make install && \
   ln -s /usr/local/bin/openssl /usr/bin/openssl && \
-  ldconfig
+  ldconfig /
 
 # Clean-up
 RUN \
