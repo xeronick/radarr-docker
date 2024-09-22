@@ -1,13 +1,14 @@
 FROM ghcr.io/linuxserver/radarr
 
 ENV MMT_UPDATE false
-ENV MMT_FFMPEG_URL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
-ENV MMT_OPENSSL_VERSION 1.1.1k
+# ENV MMT_FFMPEG_URL https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz
+# ENV MMT_OPENSSL_VERSION 1.1.1k
 
 RUN \
   apk update && \
   apk add --no-cache \
   ffmpeg \
+  openssl \
   git \
   python3 \
   py3-pip \
@@ -24,25 +25,25 @@ RUN \
   /transcoder/venv/bin/pip install -r /transcoder/setup/requirements.txt
 
 # Download and install FFMPEG + FFPROBE
-RUN \
-  wget ${MMT_FFMPEG_URL} -O /tmp/ffmpeg.tar.xz && \
-  tar -xJf /tmp/ffmpeg.tar.xz -C /usr/local/bin --strip-components 1 && \
-  chgrp users /usr/local/bin/ffmpeg && \
-  chgrp users /usr/local/bin/ffprobe && \
-  chmod g+x /usr/local/bin/ffmpeg && \
-  chmod g+x /usr/local/bin/ffprobe
+# RUN \
+#   wget ${MMT_FFMPEG_URL} -O /tmp/ffmpeg.tar.xz && \
+#   tar -xJf /tmp/ffmpeg.tar.xz -C /usr/local/bin --strip-components 1 && \
+#   chgrp users /usr/local/bin/ffmpeg && \
+#   chgrp users /usr/local/bin/ffprobe && \
+#   chmod g+x /usr/local/bin/ffmpeg && \
+#   chmod g+x /usr/local/bin/ffprobe
 
 # Download and install OpenSSL
-RUN \
-  wget https://www.openssl.org/source/openssl-${MMT_OPENSSL_VERSION}.tar.gz -O /tmp/openssl-${MMT_OPENSSL_VERSION}.tar.gz && \
-  tar -zxf /tmp/openssl-${MMT_OPENSSL_VERSION}.tar.gz && cd openssl-${MMT_OPENSSL_VERSION} && \
-  ./config && \
-  make && \
-  make test && \
-  rm -rf /usr/bin/openssl && \
-  make install && \
-  ln -s /usr/local/bin/openssl /usr/bin/openssl && \
-  ldconfig /
+# RUN \
+#   wget https://www.openssl.org/source/openssl-${MMT_OPENSSL_VERSION}.tar.gz -O /tmp/openssl-${MMT_OPENSSL_VERSION}.tar.gz && \
+#   tar -zxf /tmp/openssl-${MMT_OPENSSL_VERSION}.tar.gz && cd openssl-${MMT_OPENSSL_VERSION} && \
+#   ./config && \
+#   make && \
+#   make test && \
+#   rm -rf /usr/bin/openssl && \
+#   make install && \
+#   ln -s /usr/local/bin/openssl /usr/bin/openssl && \
+#   ldconfig /
 
 # Clean-up
 RUN \
